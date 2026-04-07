@@ -124,4 +124,7 @@ def ask_query():
 
 
 if __name__ == "__main__":
-    app.run(debug=True)
+    # Get the port from Render's environment, or use 5000 for local testing
+    port = int(os.environ.get("PORT", 5000))
+    # '0.0.0.0' tells Flask to be visible to the outside world (Render's network)
+    app.run(host="0.0.0.0", port=port)
