@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Career Coach</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            'deep': '#0F172A',  // Slate 900
+                            'action': '#2563EB'  // Blue 600
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Modern backdrop blur for the form container */
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        /* Subtle, slow background animation */
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(5deg); }
+            100% { transform: translateY(0px) rotate(0deg); }
+        }
+
+        .floating-icon {
+            animation: float 6s ease-in-out infinite;
+        }
+    </style>
+</head>
+<body class="min-h-screen bg-brand-deep text-slate-100 font-sans antialiased overflow-x-hidden">
+
+    <div class="fixed inset-0 pointer-events-none z-0">
+        <div class="absolute -top-10 -right-10 w-64 h-64 bg-action/10 rounded-full blur-3xl"></div>
+        <div class="absolute top-[10%] right-[15%] w-32 h-32 floating-icon" style="animation-delay: -1s;">
+            <svg viewBox="0 0 24 24" class="w-full h-full text-action/20" fill="currentColor"><path d="M20 18H4V8h16v10M12 12l1-3h3l1 3h3V6H4v6h3l1-3h3l1 3z"></path></svg>
+        </div>
+
+        <div class="absolute bottom-10 -left-10 w-64 h-64 bg-action/10 rounded-full blur-3xl"></div>
+        <div class="absolute bottom-[10%] left-[10%] w-24 h-24 floating-icon" style="animation-delay: -3s;">
+            <svg viewBox="0 0 24 24" class="w-full h-full text-action/15" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
+        </div>
+    </div>
+
+    <div class="relative z-10">
+        {% block content %}{% endblock %}
+    </div>
+
+</body>
+</html>

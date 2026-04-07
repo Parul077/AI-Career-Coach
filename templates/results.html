@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+{% block content %}
+<main class="min-h-screen flex items-center justify-center p-6 lg:p-12">
+    <div class="w-full max-w-4xl glass-panel p-8 lg:p-12 rounded-3xl shadow-2xl space-y-8">
+        <header class="text-center space-y-2">
+            <h1 class="text-3xl lg:text-4xl font-extrabold text-white">Resume <span class="text-action">Analysis</span></h1>
+            <p class="text-slate-400">Expert evaluation of your professional profile</p>
+        </header>
+
+        <div class="bg-white/5 border border-white/10 rounded-2xl p-6 overflow-auto max-h-[60vh]">
+            <pre class="text-slate-200 text-sm md:text-base whitespace-pre-wrap leading-relaxed font-sans">{{ resume_analysis }}</pre>
+        </div>
+
+        <div class="flex flex-col sm:flex-row gap-4 justify-between pt-4">
+            <a href="/" class="flex items-center justify-center px-8 py-3 rounded-full bg-slate-800 text-white font-semibold hover:bg-slate-700 transition duration-200">
+                ← Go Back
+            </a>
+            <a href="/ask" class="flex items-center justify-center px-8 py-3 rounded-full bg-action text-white font-semibold hover:bg-blue-700 shadow-lg shadow-action/30 transition duration-200 transform hover:-translate-y-0.5">
+                Ask a Follow-up Question
+            </a>
+        </div>
+    </div>
+</main>
+{% endblock %}
