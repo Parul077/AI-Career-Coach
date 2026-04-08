@@ -14,7 +14,7 @@ AI Career Coach is an intelligent, RAG-powered web application designed to trans
 
 **Vector Database: FAISS (Facebook AI Similarity Search)**
 
-**Embeddings: Hugging Face all-MiniLM-L6-v2**
+**Embeddings: Google Generative AI API (gemini-embedding-001)**
 
 **Frontend: Tailwind CSS, Framer Motion**
 
@@ -88,6 +88,28 @@ Plaintext
 
 <br>
 
+## Project Screenshot
+
+<img width="1890" height="820" alt="Screenshot 2026-04-08 121727" src="https://github.com/user-attachments/assets/6e31fa6c-09ba-46a8-a592-e014c4e8d5bf" />
+
+<br>
+
+<img width="1898" height="818" alt="Screenshot 2026-04-08 130652" src="https://github.com/user-attachments/assets/a8d282b8-f038-431e-ab09-264d1fd01215" />
+
+<br>
+
+<img width="1889" height="830" alt="Screenshot 2026-04-08 130705" src="https://github.com/user-attachments/assets/dd8fb8c7-6ecc-44fd-a6c7-16bf00012822" />
+
+<br>
+
+<img width="1919" height="827" alt="Screenshot 2026-04-08 124735" src="https://github.com/user-attachments/assets/f4bfb83e-2978-4e9c-8f05-913e015595d6" />
+
+<br>
+
+<img width="1891" height="829" alt="Screenshot 2026-04-08 124755" src="https://github.com/user-attachments/assets/bef23ada-38c1-4a79-920e-b1fe518ae229" />
+
+
+<br>
 
 ## 📈 Deployment
 This project is optimized for deployment on Render. Ensure you set your GROQ_API_KEY in the Render dashboard under Environment Variables before deploying.
