@@ -6,12 +6,13 @@ import PyPDF2
 
 # Core LangChain imports
 from langchain_core.prompts import PromptTemplate
-from langchain_classic.chains import LLMChain, RetrievalQA
+from langchain_core.runnables import RunnablePassthrough
+from langchain.chains import RetrievalQA
 from langchain_text_splitters import CharacterTextSplitter
 
-# NEW: Groq and Community imports (These usually fix the red lines)
+# NEW: Groq and Google AI imports
 from langchain_groq import ChatGroq
-from langchain_community.embeddings import HuggingFaceEmbeddings
+from langchain_google_genai import GoogleGenerativeAIEmbeddings  # Light-weight API approach
 from langchain_community.vectorstores import FAISS
 
 # Load environment variables from .env
@@ -26,27 +27,43 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 if not os.path.exists(UPLOAD_FOLDER):
     os.makedirs(UPLOAD_FOLDER)
 
-# Initialize Embeddings and LLM
-embeddings = HuggingFaceEmbeddings()
+# --- WHY WE ARE NOT USING HUGGINGFACE EMBEDDINGS ---
+# 1. MEMORY LIMIT: Render's Free Tier has only 512MB RAM.
+# 2. HEAVY LIBRARIES: HuggingFace requires 'torch' and local model files (like all-MiniLM-L6-v2),
+#    which consume ~700MB+ RAM, causing "Out of Memory" crashes.
+# 3. API ADVANTAGE: GoogleGenerativeAIEmbeddings sends the text to Google's servers to get
+#    the embeddings. This uses almost ZERO RAM on our server, making deployment possible.
+# ----------------------------------------------------
+
+# Initialize Google Embeddings (Uses API instead of local RAM)
+embeddings = GoogleGenerativeAIEmbeddings(
+    model="models/embedding-001",
+    google_api_key=os.getenv("GOOGLE_API_KEY")
+)
 
 # Initialize Groq LLM
 llm = ChatGroq(
     temperature=0,
-    model_name="llama-3.3-70b-versatile",  # Or "mixtral-8x7b-32768"
+    model_name="llama-3.3-70b-versatile",
     groq_api_key=os.getenv("GROQ_API_KEY")
 )
 
 
 def perform_qa(query):
-    # Check if the folder exists locally
     if not os.path.exists("vector_index"):
         return "No resume has been uploaded yet. Please upload a PDF first!"
 
+    # Load FAISS index using our new Google Embeddings
     db = FAISS.load_local("vector_index", embeddings, allow_dangerous_deserialization=True)
     retriever = db.as_retriever(search_type="similarity", search_kwargs={"k": 4})
-    rqa = RetrievalQA.from_chain_type(llm=llm, chain_type="stuff", retriever=retriever, return_source_documents=True)
 
-    # Use invoke instead of the deprecated __call__
+    rqa = RetrievalQA.from_chain_type(
+        llm=llm,
+        chain_type="stuff",
+        retriever=retriever,
+        return_source_documents=True
+    )
+
     result = rqa.invoke({"query": query})
     return result['result']
 
@@ -78,12 +95,8 @@ resume_prompt = PromptTemplate(
     template=resume_summary_template,
 )
 
-# Note: LLMChain is deprecated in newer LangChain,
-# but this will still work for now with your imports.
-resume_analysis_chain = LLMChain(
-    llm=llm,
-    prompt=resume_prompt,
-)
+# Using the modern chain approach
+resume_analysis_chain = resume_prompt | llm
 
 
 @app.route('/')
@@ -106,11 +119,13 @@ def upload_file():
         resume_text = extract_text_from_pdf(file_path)
         splitted_text = text_splitter.split_text(resume_text)
 
+        # Create vectorstore using Google API
         vectorstore = FAISS.from_texts(splitted_text, embeddings)
         vectorstore.save_local("vector_index")
 
-        # Updated to .run or .invoke
-        resume_analysis = resume_analysis_chain.run(resume=resume_text)
+        # Invoke the chain
+        response = resume_analysis_chain.invoke({"resume": resume_text})
+        resume_analysis = response.content
         return render_template('results.html', resume_analysis=resume_analysis)
 
 
@@ -124,7 +139,5 @@ def ask_query():
 
 
 if __name__ == "__main__":
-    # Get the port from Render's environment, or use 5000 for local testing
     port = int(os.environ.get("PORT", 5000))
-    # '0.0.0.0' tells Flask to be visible to the outside world (Render's network)
     app.run(host="0.0.0.0", port=port)
