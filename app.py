@@ -7,7 +7,7 @@ import PyPDF2
 # Core LangChain imports
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
-from langchain.chains import RetrievalQA
+from langchain_classic.chains import RetrievalQA
 from langchain_text_splitters import CharacterTextSplitter
 
 # NEW: Groq and Google AI imports
@@ -37,7 +37,7 @@ if not os.path.exists(UPLOAD_FOLDER):
 
 # Initialize Google Embeddings (Uses API instead of local RAM)
 embeddings = GoogleGenerativeAIEmbeddings(
-    model="models/embedding-001",
+    model="gemini-embedding-001",
     google_api_key=os.getenv("GOOGLE_API_KEY")
 )
 
