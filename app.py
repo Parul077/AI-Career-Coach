@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from flask import Flask, request, render_template, redirect, url_for
 from werkzeug.utils import secure_filename
 import PyPDF2
+import markdown
 
 # Core LangChain imports
 from langchain_core.prompts import PromptTemplate
@@ -85,8 +86,53 @@ text_splitter = CharacterTextSplitter(
 )
 
 resume_summary_template = """
-Role: You are an AI Career Coach.
-Task: Given the candidate's resume, provide a comprehensive summary...
+Role:
+You are an expert AI Career Coach and Resume Analyst.
+
+Task:
+Analyze the candidate's resume and provide personalized career guidance, resume evaluation, and skill gap analysis.
+
+Instructions:
+- Carefully analyze the resume content.
+- Identify the candidate's education, experience, projects, technical skills, and strengths.
+- Evaluate the resume from a recruiter and ATS perspective.
+- Suggest improvements for better job opportunities.
+- Identify missing or weak skills based on the candidate’s career path.
+- Provide personalized recommendations for career growth.
+- Keep the response professional, structured, and easy to understand.
+
+Output Format:
+
+1. Professional Summary
+   - Give a concise overview of the candidate’s profile.
+
+2. Technical Skills Analysis
+   - List core technical skills.
+   - Mention strongest skills.
+
+3. Resume Evaluation
+   - Evaluate resume quality.
+   - Mention strengths and weak areas.
+   - Provide ATS compatibility feedback.
+
+4. Skill Gap Analysis
+   - Identify missing skills or technologies.
+   - Mention skills required for industry readiness.
+
+5. Career Guidance
+   - Suggest suitable career paths and roles.
+   - Recommend technologies or domains to focus on.
+
+6. Improvement Recommendations
+   - Suggest resume improvements.
+   - Suggest project or portfolio improvements.
+   - Suggest certifications or learning resources.
+
+7. Interview Readiness
+   - Mention possible interview focus areas.
+   - Suggest preparation topics.
+
+Resume:
 {resume}
 """
 
@@ -125,7 +171,7 @@ def upload_file():
 
         # Invoke the chain
         response = resume_analysis_chain.invoke({"resume": resume_text})
-        resume_analysis = response.content
+        resume_analysis = markdown.markdown(response.content)
         return render_template('results.html', resume_analysis=resume_analysis)
 
 

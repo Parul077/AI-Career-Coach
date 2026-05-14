@@ -10,12 +10,12 @@
         <div class="space-y-6 text-left">
             <div class="bg-blue-900/40 border-l-4 border-blue-400 p-6 rounded-r-2xl">
                 <h2 class="text-xs font-black text-blue-300 uppercase tracking-widest mb-2">Your Question</h2>
-                <p class="text-white text-lg font-semibold">{{ query }}</p>
+                <p> class="text-white text-lg font-semibold">{{ query }}</p>
             </div>
 
             <div class="bg-slate-900/60 p-6 rounded-2xl border border-white/10 shadow-inner">
                 <h2 class="text-xs font-black text-slate-400 uppercase tracking-widest mb-3">Analysis</h2>
-                <p class="text-slate-100 whitespace-pre-wrap leading-relaxed font-medium">{{ result }}</p>
+                <div class="text-slate-100 whitespace-pre-wrap leading-relaxed font-medium">{{ result | safe }}</div>
             </div>
         </div>
 
