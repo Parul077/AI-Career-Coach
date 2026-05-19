@@ -9,7 +9,7 @@ import markdown
 from langchain_core.prompts import PromptTemplate
 from langchain_core.runnables import RunnablePassthrough
 from langchain_classic.chains import RetrievalQA
-from langchain_text_splitters import CharacterTextSplitter
+from langchain_text_splitters import RecursiveCharacterTextSplitter
 
 # NEW: Groq and Google AI imports
 from langchain_groq import ChatGroq
@@ -78,11 +78,9 @@ def extract_text_from_pdf(pdf_path):
     return text
 
 
-text_splitter = CharacterTextSplitter(
-    separator='\n',
-    chunk_size=2000,
-    chunk_overlap=200,
-    length_function=len,
+text_splitter = RecursiveCharacterTextSplitter(
+    chunk_size=1200,
+    chunk_overlap=200
 )
 
 resume_summary_template = """
@@ -180,7 +178,8 @@ def ask_query():
     if request.method == 'POST':
         query = request.form['query']
         result = perform_qa(query)
-        return render_template('qa_results.html', query=query, result=result)
+        formatted_result = markdown.markdown(result)
+        return render_template('qa_results.html', query=query, result=formatted_result)
     return render_template('ask.html')
 
 
